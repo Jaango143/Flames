@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FLAMES of Destiny ❤️</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.15);
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: fadeIn 1s ease;
+  }
+
+  input {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+
+  button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    background: #ff4e50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: transform 0.2s;
+  }
+
+  button:hover {
+    transform: scale(1.05);
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .loader {
+    width: 80px;
+    height: 80px;
+    border: 8px solid rgba(255,255,255,0.3);
+    border-top: 8px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h1 span {
+    display: block;
+    font-size: 18px;
+    margin-top: 10px;
+    opacity: 0.9;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- PAGE 1 -->
+<div class="card" id="page1">
+  <h1>🔥 FLAMES of Destiny 🔥<span>Discover your future together</span></h1>
+  <input id="name1" placeholder="Your Name">
+  <input id="name2" placeholder="Their Name">
+  <button onclick="goToCuriosity()">Check Our Future 💖</button>
+</div>
+
+<!-- PAGE 2 -->
+<div class="card hidden" id="page2">
+  <h1>😳 Wait...</h1>
+  <p>Some answers can change everything.<br>Are you really ready?</p>
+  <button onclick="goToLoader()">Tell Me Anyway 💘</button>
+</div>
+
+<!-- PAGE 3 -->
+<div class="card hidden" id="page3">
+  <h1>💫 Calculating Destiny</h1>
+  <div class="loader"></div>
+  <p>The universe is aligning your hearts...</p>
+</div>
+
+<!-- PAGE 4 -->
+<div class="card hidden" id="page4">
+  <h1 id="finalResult"></h1>
+  <p id="finalMessage"></p>
+  <button onclick="location.reload()">Try Again 🔁</button>
+</div>
+
+<script>
+let n1 = "", n2 = "";
+
+function goToCuriosity() {
+  n1 = document.getElementById("name1").value.trim();
+  n2 = document.getElementById("name2").value.trim();
+
+  if (!n1 || !n2) {
+    alert("Please enter both names 💕");
+    return;
+  }
+
+  logToGoogleSheet(n1, n2);
+
+  document.getElementById("page1").classList.add("hidden");
+  document.getElementById("page2").classList.remove("hidden");
+}
+
+function goToLoader() {
+  document.getElementById("page2").classList.add("hidden");
+  document.getElementById("page3").classList.remove("hidden");
+
+  setTimeout(showResult, 3500);
+}
+
+function showResult() {
+  document.getElementById("page3").classList.add("hidden");
+  document.getElementById("page4").classList.remove("hidden");
+
+  const result = flamesResult(n1, n2);
+  document.getElementById("finalResult").innerText = result;
+
+  const messages = {
+    Friends: "You two are meant to be amazing friends 💫",
+    Love: "This is true LOVE ❤️ Destiny smiles at you!",
+    Affection: "There’s deep affection between your hearts 🥰",
+    Marriage: "Wedding bells might ring someday 💍✨",
+    Enemies: "Hmm… love-hate stories are intense 😈",
+    Siblings: "A bond like family 🤍 Forever close."
+  };
+
+  document.getElementById("finalMessage").innerText = messages[result];
+}
+
+function flamesResult(a, b) {
+  let s1 = a.toLowerCase().replace(/\s/g,'');
+  let s2 = b.toLowerCase().replace(/\s/g,'');
+
+  for (let ch of s1) {
+    if (s2.includes(ch)) {
+      s1 = s1.replace(ch,'');
+      s2 = s2.replace(ch,'');
+    }
+  }
+
+  let count = s1.length + s2.length;
+  let flames = ["Friends","Love","Affection","Marriage","Enemies","Siblings"];
+
+  let index = 0;
+  while (flames.length > 1) {
+    index = (index + count - 1) % flames.length;
+    flames.splice(index, 1);
+  }
+  return flames[0];
+}
+
+function logToGoogleSheet(name1, name2) {
+  fetch("https://script.google.com/macros/s/AKfycbwzbX1BDwD51tRm3oszWoQbKtaodQfKFbs3PNc8ramv5uz34LaMLKIMYB7W2brBoYa7DA/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      name1: name1,
+      name2: name2,
+      time: new Date().toLocaleString()
+    })
+  });
+}
+</script>
+
+</body>
+</html>
